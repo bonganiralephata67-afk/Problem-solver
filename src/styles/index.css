@@ -24,10 +24,11 @@ body {
   overflow-x: hidden;
 }
 
-/* Crisp Clean Monochrome Background with subtle divider grid */
+/* Sleek Dark Tech Background */
 .clean-page-bg {
-  background-color: #ffffff;
+  background-color: var(--color-bg-base);
   position: relative;
+  overflow: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -91,7 +92,7 @@ input, textarea, select {
 
 /* Minimalist Clean Card */
 .clean-card {
-  background: #ffffff;
+  background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);

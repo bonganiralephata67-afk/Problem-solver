@@ -1,41 +1,42 @@
 :root {
-  /* Clean Professional Black & White with Blue CTA */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb; /* Clean Royal Blue CTA */
+  /* Sleek Dark Tech Theme with Blue CTA (matching DavichiUX reference) */
+  --color-primary-50: #1e293b;
+  --color-primary-100: #1e3a8a;
+  --color-primary-200: #1d4ed8;
+  --color-primary-300: #2563eb;
+  --color-primary-400: #3b82f6;
+  --color-primary-500: #60a5fa;
+  --color-primary-600: #2563eb; /* Electric Royal Blue CTA */
   --color-primary-700: #1d4ed8;
   --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
+  --color-primary-900: #eff6ff;
 
-  /* Black & White Neutrals */
-  --color-bg-base: #ffffff;      /* Pure clean white background */
-  --color-bg-surface: #ffffff;
-  --color-bg-subtle: #f9fafb;   /* Crisp subtle off-white/light grey */
-  --color-bg-muted: #f3f4f6;
-  --color-text-main: #0a0a0a;   /* Pure deep black */
-  --color-text-body: #171717;
-  --color-text-muted: #52525b;  /* Clean neutral slate/grey */
-  --color-text-dim: #71717a;
-  --color-border: #e5e7eb;      /* Crisp light border */
-  --color-border-hover: #d1d5db;
-  --color-border-strong: #000000;
+  /* Sleek Dark Background & Surface Neutrals */
+  --color-bg-base: #08090d;      /* Deep obsidian black */
+  --color-bg-surface: #10121a;   /* Rich dark card surface */
+  --color-bg-subtle: #161922;    /* Subtle hover surface */
+  --color-bg-muted: #1d212d;
+  --color-text-main: #ffffff;    /* Pure crisp white */
+  --color-text-body: #f1f5f9;
+  --color-text-muted: #94a3b8;   /* Clean slate grey */
+  --color-text-dim: #64748b;
+  --color-border: rgba(255, 255, 255, 0.08);       /* Subtle glass border */
+  --color-border-hover: rgba(255, 255, 255, 0.18);
+  --color-border-strong: rgba(255, 255, 255, 0.28);
 
   /* Status Accents */
-  --color-accent-teal: #0d9488;
+  --color-accent-teal: #14b8a6;
   --color-accent-emerald: #10b981;
   --color-accent-amber: #f59e0b;
-  --color-accent-rose: #ef4444;
+  --color-accent-rose: #f43f5e;
 
-  /* Shadows - Minimal & refined */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  /* Shadows & Glows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 16px -2px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 14px 28px -4px rgba(0, 0, 0, 0.7);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+  --glow-primary: 0 0 25px rgba(37, 99, 235, 0.4);
 
   /* Radius */
   --radius-xs: 4px;

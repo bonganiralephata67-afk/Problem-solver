@@ -6,7 +6,7 @@ import SupportBot from '../components/support/SupportBot';
 
 export default function MainLayout() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#ffffff' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--color-bg-base)' }}>
       <Navbar />
       <main style={{ flex: 1 }}>
         <Outlet />

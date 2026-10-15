@@ -15,6 +15,12 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+import mentorCenter from '../assets/mentors/mentor_center.jpg';
+import mentorLeft1 from '../assets/mentors/mentor_left1.jpg';
+import mentorLeft2 from '../assets/mentors/mentor_left2.jpg';
+import mentorRight1 from '../assets/mentors/mentor_right1.jpg';
+import mentorRight2 from '../assets/mentors/mentor_right2.jpg';
+
 const ICON_MAP = {
   GraduationCap,
   Briefcase,
@@ -36,11 +42,17 @@ export default function HomePage() {
 
   return (
     <div className="clean-page-bg">
-      {/* HERO SECTION */}
+      {/* HERO SECTION - SLEEK DARK TECH WITH AMBIENT GLOW (Image 1) */}
       <section className="hero-wrapper">
+        {/* Ambient Glowing Spheres & Orbital Ring */}
+        <div className="ambient-glow-sphere-1" />
+        <div className="ambient-glow-sphere-2" />
+        <div className="ambient-orbital-ring" />
+
         <div className="container">
           <div className="hero-center animate-slide-up">
             <div className="hero-pill">
+              <CheckCircle2 size={15} style={{ color: 'var(--color-primary-400)' }} />
               <span>Simple On-Demand Expert Matching</span>
             </div>
 
@@ -62,12 +74,72 @@ export default function HomePage() {
                 Become an Expert
               </Link>
             </div>
+
+            {/* FANNED MENTORS CARDS (Image 2 - Frameblox UI Style) */}
+            <div className="hero-mentors-fanned" id="hero-mentors-fanned-container">
+              {/* Far Left Card */}
+              <div 
+                className="fanned-card fanned-card-left1" 
+                title="Academic & Mathematics Specialist"
+                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000001')}
+                id="fanned-card-1"
+              >
+                <img src={mentorLeft1} alt="Verified Academic Mentor" />
+              </div>
+
+              {/* Left Inner Card */}
+              <div 
+                className="fanned-card fanned-card-left2" 
+                title="Product Design & UI/UX Mentor"
+                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000005')}
+                id="fanned-card-2"
+              >
+                <img src={mentorLeft2} alt="Verified Product Designer" />
+              </div>
+
+              {/* Center Featured Card (Largest) */}
+              <div 
+                className="fanned-card fanned-card-center" 
+                title="Software Architect & Engineering Lead"
+                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000006')}
+                id="fanned-card-center"
+              >
+                <img src={mentorCenter} alt="Featured Senior Engineering Mentor" />
+                <div className="fanned-card-badge">
+                  <div className="flex items-center gap-1">
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
+                    <span>Verified Expert</span>
+                  </div>
+                  <ShieldCheck size={14} style={{ color: 'var(--color-primary-400)' }} />
+                </div>
+              </div>
+
+              {/* Right Inner Card */}
+              <div 
+                className="fanned-card fanned-card-right1" 
+                title="Career Strategy & Transition Mentor"
+                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000002')}
+                id="fanned-card-3"
+              >
+                <img src={mentorRight1} alt="Verified Career Mentor" />
+              </div>
+
+              {/* Far Right Card */}
+              <div 
+                className="fanned-card fanned-card-right2" 
+                title="Entrepreneurship & Growth Consultant"
+                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000003')}
+                id="fanned-card-4"
+              >
+                <img src={mentorRight2} alt="Verified Business Expert" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* HOW IT WORKS SECTION */}
-      <section className="section" id="how-it-works" style={{ background: '#ffffff', borderBottom: '1px solid var(--color-border)' }}>
+      <section className="section" id="how-it-works" style={{ background: 'var(--color-bg-base)', borderBottom: '1px solid var(--color-border)' }}>
         <div className="container">
           <div className="section-header">
             <span className="section-tag">How It Works</span>
@@ -106,7 +178,7 @@ export default function HomePage() {
       </section>
 
       {/* EXPLORE POPULAR CATEGORIES */}
-      <section className="section" style={{ background: '#f9fafb' }}>
+      <section className="section" style={{ background: 'var(--color-bg-surface)', borderBottom: '1px solid var(--color-border)' }}>
         <div className="container">
           <div className="section-header">
             <span className="section-tag">Areas of Expertise</span>
@@ -133,7 +205,7 @@ export default function HomePage() {
                     <h3 className="category-title">{category.name}</h3>
                     <p className="category-desc">{category.description}</p>
                   </div>
-                  <div className="flex items-center gap-1" style={{ color: 'var(--color-primary-600)', fontSize: '0.88rem', fontWeight: 600, marginTop: 'auto' }}>
+                  <div className="flex items-center gap-1" style={{ color: 'var(--color-primary-400)', fontSize: '0.88rem', fontWeight: 600, marginTop: 'auto' }}>
                     <span>Request help</span>
                     <ArrowRight size={14} />
                   </div>
@@ -145,16 +217,16 @@ export default function HomePage() {
       </section>
 
       {/* TRUST & INTEGRITY BANNER */}
-      <section className="section" style={{ background: '#ffffff', borderTop: '1px solid var(--color-border)', textAlign: 'center' }}>
+      <section className="section" style={{ background: 'var(--color-bg-base)', borderTop: '1px solid var(--color-border)', textAlign: 'center' }}>
         <div className="container" style={{ maxWidth: '640px' }}>
-          <div className="flex items-center justify-center gap-2" style={{ color: 'var(--color-primary-600)', marginBottom: '0.75rem' }}>
+          <div className="flex items-center justify-center gap-2" style={{ color: 'var(--color-primary-400)', marginBottom: '0.75rem' }}>
             <ShieldCheck size={20} />
             <span style={{ fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Verified Mentorship
             </span>
           </div>
 
-          <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1rem', color: '#000000' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1rem', color: '#ffffff' }}>
             Ready to get started?
           </h2>
 

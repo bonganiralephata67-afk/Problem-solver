@@ -143,11 +143,11 @@ export default function GetHelpPage() {
   };
 
   return (
-    <div style={{ background: '#ffffff', minHeight: 'calc(100vh - 4.5rem)', padding: '4rem 1.5rem 6rem' }}>
+    <div style={{ background: 'var(--color-bg-base)', minHeight: 'calc(100vh - 4.5rem)', padding: '4rem 1.5rem 6rem' }}>
       <div className="container" style={{ maxWidth: '820px' }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.75rem', color: '#000000' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.75rem', color: 'var(--color-text-main)' }}>
             Request Help
           </h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '1.05rem', maxWidth: '580px', margin: '0 auto', lineHeight: '1.6' }}>
@@ -180,7 +180,7 @@ export default function GetHelpPage() {
         <form onSubmit={handleSubmit} className="streamlined-form-card" id="get-help-unified-form">
           {/* SECTION 1: AREA & TOPIC */}
           <div style={{ marginBottom: '3rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#000000' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
               1. Which area do you need help with?
             </h2>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
@@ -204,7 +204,7 @@ export default function GetHelpPage() {
                     }}
                     id={`cat-card-${cat.slug}`}
                   >
-                    <div style={{ color: isSelected ? 'var(--color-primary-600)' : '#000000' }}>
+                    <div style={{ color: isSelected ? 'var(--color-primary-400)' : 'var(--color-text-main)' }}>
                       <Icon size={22} />
                     </div>
                     <span style={{ fontSize: '0.85rem', fontWeight: 600, lineHeight: '1.3' }}>
@@ -219,7 +219,7 @@ export default function GetHelpPage() {
             {categoryId && relevantTopics.length > 0 && selectedCategory?.slug !== 'other' && (
               <div 
                 style={{
-                  background: '#f9fafb',
+                  background: 'var(--color-bg-subtle)',
                   border: '1px solid var(--color-border)',
                   borderRadius: 'var(--radius-md)',
                   padding: '1.5rem',
@@ -296,7 +296,7 @@ export default function GetHelpPage() {
 
           {/* SECTION 2: QUESTION & CONTACT */}
           <div className="form-section-divider">
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#000000' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--color-text-main)' }}>
               2. Explain your question & your details
             </h2>
             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.75rem' }}>

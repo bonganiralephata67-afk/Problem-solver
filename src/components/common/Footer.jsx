@@ -12,7 +12,7 @@ export default function Footer() {
               <div className="brand-icon" style={{ width: '2rem', height: '2rem' }}>
                 <Compass size={18} />
               </div>
-              <span style={{ color: '#000000', fontWeight: 800, fontSize: '1.2rem', fontFamily: 'var(--font-heading)' }}>
+              <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '1.2rem', fontFamily: 'var(--font-heading)' }}>
                 The Problem Solvers
               </span>
             </div>
