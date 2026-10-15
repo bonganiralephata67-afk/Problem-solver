@@ -15,7 +15,9 @@ import {
   Plus, 
   ArrowRight,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Star,
+  CheckCircle2
 } from 'lucide-react';
 
 export default function SeekerDashboardPage() {
@@ -63,19 +65,19 @@ export default function SeekerDashboardPage() {
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>My Help Requests</h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
-            Track your questions, connect with assigned mentors, and schedule meetings.
+            Track your questions, connect with your assigned mentors, and schedule meetings.
           </p>
         </div>
 
         <Link to="/get-help" className="btn btn-primary" id="seeker-new-request-btn">
-          <Plus size={16} /> New Request
+          <Plus size={16} /> Submit New Request
         </Link>
       </div>
 
       {/* Requests List */}
       {userRequests.length === 0 ? (
         <div 
-          className="glass-panel" 
+          className="clean-card" 
           style={{ padding: '3.5rem 2rem', textAlign: 'center', maxWidth: '600px', margin: '2rem auto' }}
           id="seeker-empty-state"
         >
@@ -83,7 +85,7 @@ export default function SeekerDashboardPage() {
             style={{
               width: '3.5rem',
               height: '3.5rem',
-              borderRadius: '50%',
+              borderRadius: 'var(--radius-full)',
               background: 'var(--color-primary-50)',
               color: 'var(--color-primary-600)',
               display: 'flex',
@@ -94,11 +96,11 @@ export default function SeekerDashboardPage() {
           >
             <Clock size={28} />
           </div>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>
             No requests submitted yet
           </h3>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-            Have a question about a school subject, your career roadmap, business funding, or product design? Submit your first request to get matched with an expert.
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.6' }}>
+            Need help with a school subject, your career roadmap, business funding, or product design? Submit your question in just a few clicks.
           </p>
           <Link to="/get-help" className="btn btn-primary" id="empty-state-get-help-btn">
             Submit a Request <ArrowRight size={16} />
@@ -112,6 +114,7 @@ export default function SeekerDashboardPage() {
             const expert = getAssignedExpert(req);
             const conv = conversations.find(c => c.request_id === req.id);
             const appt = appointments.find(a => a.request_id === req.id);
+            const isAccepted = req.status === 'expert_accepted' || req.status === 'meeting_scheduled';
 
             return (
               <div 
@@ -121,21 +124,22 @@ export default function SeekerDashboardPage() {
               >
                 <div className="flex justify-between items-center" style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
                   <div className="flex items-center gap-2">
-                    <span style={{ fontWeight: 700, color: 'var(--color-primary-700)', fontSize: '0.9rem' }}>
+                    <span style={{ fontWeight: 800, color: 'var(--color-primary-600)', fontSize: '0.9rem' }}>
                       {cat?.name || 'Category'}
                     </span>
                     <span style={{ color: 'var(--color-text-dim)' }}>•</span>
-                    <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>
                       {top?.name || 'Topic'}
                     </span>
                     {req.education_level && (
                       <span 
                         style={{
                           fontSize: '0.75rem',
-                          background: 'var(--color-bg-subtle)',
+                          background: '#f1f5f9',
                           padding: '2px 8px',
                           borderRadius: 'var(--radius-full)',
                           border: '1px solid var(--color-border)',
+                          fontWeight: 600,
                         }}
                       >
                         {req.education_level}
@@ -146,54 +150,65 @@ export default function SeekerDashboardPage() {
                   <StatusBadge status={req.status} />
                 </div>
 
-                {/* Inquiry text snippet */}
+                {/* Inquiry text */}
                 <p style={{ color: 'var(--color-text-main)', fontSize: '0.95rem', lineHeight: '1.5' }}>
                   {req.inquiry}
                 </p>
 
-                {/* Assigned expert badge if accepted */}
-                {expert && (
+                {/* RICH ASSIGNED EXPERT CARD (Prominently displays expert information) */}
+                {expert ? (
                   <div 
                     style={{
-                      background: 'var(--color-primary-50)',
-                      border: '1px solid var(--color-primary-200)',
-                      borderRadius: 'var(--radius-md)',
-                      padding: '0.75rem 1rem',
+                      background: 'linear-gradient(135deg, #f0f1fe 0%, #ffffff 100%)',
+                      border: '1.5px solid var(--color-primary-200)',
+                      borderRadius: 'var(--radius-lg)',
+                      padding: '1.25rem 1.5rem',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       flexWrap: 'wrap',
-                      gap: '0.75rem',
+                      gap: '1.25rem',
+                      boxShadow: '0 4px 12px rgba(49, 46, 203, 0.06)',
                     }}
+                    id={`assigned-expert-card-${req.id}`}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <div 
                         style={{
-                          width: '2rem',
-                          height: '2rem',
-                          borderRadius: '50%',
+                          width: '3.25rem',
+                          height: '3.25rem',
+                          borderRadius: 'var(--radius-full)',
                           background: 'var(--color-primary-600)',
                           color: '#ffffff',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 700,
-                          fontSize: '0.85rem',
+                          fontWeight: 800,
+                          fontSize: '1.2rem',
+                          boxShadow: '0 4px 10px rgba(49, 46, 203, 0.3)',
+                          flexShrink: 0,
                         }}
                       >
                         {expert.full_name.charAt(0)}
                       </div>
                       <div>
-                        <div className="flex items-center gap-1">
-                          <strong style={{ fontSize: '0.9rem' }}>{expert.full_name}</strong>
-                          <ShieldCheck size={14} style={{ color: 'var(--color-accent-teal)' }} />
+                        <div className="flex items-center gap-2">
+                          <strong style={{ fontSize: '1.05rem', color: '#0b0f19' }}>{expert.full_name}</strong>
+                          <span className="badge badge-approved" style={{ fontSize: '0.7rem' }}>
+                            <ShieldCheck size={12} /> Verified Mentor
+                          </span>
                         </div>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600, marginTop: '2px' }}>
                           {expert.headline}
-                        </span>
+                        </div>
+                        <div className="flex items-center gap-1" style={{ fontSize: '0.75rem', color: '#d97706', marginTop: '3px', fontWeight: 700 }}>
+                          <Star size={13} style={{ fill: '#f59e0b', color: '#f59e0b' }} />
+                          <span>5.0 Rating • Active Responder</span>
+                        </div>
                       </div>
                     </div>
 
+                    {/* Primary chat action button and secondary meeting button */}
                     <div className="flex items-center gap-2">
                       {conv && (
                         <button
@@ -204,7 +219,7 @@ export default function SeekerDashboardPage() {
                           className="btn btn-primary btn-sm"
                           id={`open-chat-btn-${req.id}`}
                         >
-                          <MessageSquare size={14} /> Chat
+                          <MessageSquare size={14} /> Chat with {expert.full_name.split(' ')[0]}
                         </button>
                       )}
                       <button
@@ -215,9 +230,29 @@ export default function SeekerDashboardPage() {
                         className="btn btn-secondary btn-sm"
                         id={`request-meeting-btn-${req.id}`}
                       >
-                        <Calendar size={14} /> Request a Meeting
+                        <Calendar size={14} /> Schedule Meeting
                       </button>
                     </div>
+                  </div>
+                ) : (
+                  /* Waiting for expert status indicator */
+                  <div 
+                    style={{
+                      background: '#fffbeb',
+                      border: '1px solid #fde68a',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '0.85rem 1.15rem',
+                      fontSize: '0.85rem',
+                      color: '#92400e',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.65rem',
+                    }}
+                  >
+                    <Clock size={16} style={{ flexShrink: 0 }} />
+                    <span>
+                      <strong>Finding an Expert:</strong> Your request has been routed to verified mentors in {top?.name}. We will notify you as soon as an expert reviews and accepts your question.
+                    </span>
                   </div>
                 )}
 
@@ -228,8 +263,8 @@ export default function SeekerDashboardPage() {
                       background: '#f3e8ff',
                       border: '1px solid #e9d5ff',
                       borderRadius: 'var(--radius-md)',
-                      padding: '0.65rem 1rem',
-                      fontSize: '0.85rem',
+                      padding: '0.75rem 1.15rem',
+                      fontSize: '0.88rem',
                       color: '#6b21a8',
                       display: 'flex',
                       alignItems: 'center',
@@ -241,7 +276,7 @@ export default function SeekerDashboardPage() {
                     <div className="flex items-center gap-2">
                       <Calendar size={16} />
                       <span>
-                        <strong>Upcoming Session:</strong> {appt.proposed_date} at {appt.proposed_time}
+                        <strong>Upcoming Meeting:</strong> {appt.proposed_date} at {appt.proposed_time}
                       </span>
                     </div>
                     {appt.meeting_link && (
@@ -250,7 +285,7 @@ export default function SeekerDashboardPage() {
                         target="_blank" 
                         rel="noopener noreferrer" 
                         className="flex items-center gap-1"
-                        style={{ color: '#6b21a8', fontWeight: 700 }}
+                        style={{ color: '#6b21a8', fontWeight: 800 }}
                       >
                         Join Call Link <ExternalLink size={12} />
                       </a>
@@ -267,10 +302,10 @@ export default function SeekerDashboardPage() {
                   <button
                     onClick={() => setSelectedRequest(req)}
                     className="flex items-center gap-1"
-                    style={{ color: 'var(--color-primary-600)', fontWeight: 600 }}
+                    style={{ color: 'var(--color-primary-600)', fontWeight: 700 }}
                     id={`view-details-btn-${req.id}`}
                   >
-                    View Details <ChevronRight size={14} />
+                    View Full Details <ChevronRight size={14} />
                   </button>
                 </div>
               </div>
@@ -279,7 +314,7 @@ export default function SeekerDashboardPage() {
         </div>
       )}
 
-      {/* Request Details Modal */}
+      {/* REQUEST DETAILS MODAL */}
       {selectedRequest && !activeChatConvId && !isMeetingModalOpen && (
         <Modal
           isOpen={Boolean(selectedRequest)}
@@ -311,33 +346,33 @@ export default function SeekerDashboardPage() {
 
             <div style={{ marginTop: '0.5rem' }}>
               <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', display: 'block', marginBottom: '0.25rem' }}>
-                Full Question:
+                Your Question:
               </span>
-              <div style={{ background: 'var(--color-bg-subtle)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', lineHeight: '1.5' }}>
+              <div style={{ background: 'var(--color-bg-subtle)', padding: '0.85rem 1rem', borderRadius: 'var(--radius-md)', lineHeight: '1.5' }}>
                 {selectedRequest.inquiry}
               </div>
             </div>
 
-            {/* Assigned Expert card in details */}
+            {/* Assigned Expert details */}
             {assignedExpert && (
               <div 
                 style={{
                   background: 'var(--color-primary-50)',
-                  border: '1px solid var(--color-primary-200)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '1rem',
+                  border: '1.5px solid var(--color-primary-200)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '1.25rem',
                   marginTop: '0.75rem',
                 }}
               >
                 <div className="flex items-center gap-2" style={{ marginBottom: '0.5rem' }}>
                   <ShieldCheck size={18} style={{ color: 'var(--color-primary-600)' }} />
-                  <strong style={{ fontSize: '0.95rem' }}>Assigned Expert</strong>
+                  <strong style={{ fontSize: '0.95rem' }}>Assigned Expert Profile</strong>
                 </div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>{assignedExpert.full_name}</div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '0.5rem' }}>
+                <div style={{ fontSize: '1.1rem', fontWeight: 800 }}>{assignedExpert.full_name}</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600, marginBottom: '0.5rem' }}>
                   {assignedExpert.headline}
                 </div>
-                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: '1.4' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', lineHeight: '1.5' }}>
                   {assignedExpert.bio}
                 </p>
 
@@ -361,12 +396,12 @@ export default function SeekerDashboardPage() {
         </Modal>
       )}
 
-      {/* Chat Modal */}
+      {/* CHAT MODAL */}
       {activeChatConvId && selectedRequest && (
         <Modal
           isOpen={Boolean(activeChatConvId)}
           onClose={() => setActiveChatConvId(null)}
-          title={`Chat with ${assignedExpert?.full_name || 'Expert'}`}
+          title={`Chat with ${assignedExpert?.full_name || 'Mentor'}`}
           maxWidth="680px"
         >
           <ChatBox
@@ -377,7 +412,7 @@ export default function SeekerDashboardPage() {
         </Modal>
       )}
 
-      {/* Meeting Modal */}
+      {/* MEETING MODAL */}
       {isMeetingModalOpen && selectedRequest && (
         <MeetingModal
           isOpen={isMeetingModalOpen}

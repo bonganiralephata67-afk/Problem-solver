@@ -16,7 +16,9 @@ import {
   ShieldCheck, 
   HelpCircle,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Send,
+  Sparkles
 } from 'lucide-react';
 
 export default function ExpertDashboardPage() {
@@ -41,17 +43,19 @@ export default function ExpertDashboardPage() {
   // Tabs: 'matching', 'accepted', 'meetings'
   const [activeTab, setActiveTab] = useState('matching');
 
-  // Modals
-  const [inspectRequest, setInspectRequest] = useState(null);
+  // Modals & Review State
+  const [reviewRequest, setReviewRequest] = useState(null);
+  const [welcomeMessage, setWelcomeMessage] = useState('');
   const [activeChatConvId, setActiveChatConvId] = useState(null);
   const [isMeetingModalOpen, setIsMeetingModalOpen] = useState(false);
+  const [meetingTargetRequest, setMeetingTargetRequest] = useState(null);
 
   // Acceptance feedback state
   const [isAccepting, setIsAccepting] = useState(false);
   const [acceptError, setAcceptError] = useState('');
   const [acceptSuccessMsg, setAcceptSuccessMsg] = useState('');
 
-  // Data queries
+  // Queries
   const matchingRequests = getMatchingRequestsForExpert(activeExpert);
   const acceptedRequests = getAcceptedRequestsForExpert(activeExpert);
   const expertProfileId = activeExpert?.expert_profile_id || activeExpert?.id;
@@ -62,22 +66,32 @@ export default function ExpertDashboardPage() {
     toggleExpertAvailability(activeExpert.id, !isAvailable);
   };
 
-  // Accept Request Handler with Concurrency Protection
-  const handleAcceptRequest = async (request) => {
+  // Open Review Modal before accepting
+  const handleStartReview = (req) => {
+    setReviewRequest(req);
+    setAcceptError('');
+    setAcceptSuccessMsg('');
+    const topic = topics.find(t => t.id === req.topic_id);
+    setWelcomeMessage(`Hello ${req.seeker_name}! I have reviewed your request regarding ${topic?.name || 'your question'} and I am ready to guide you.`);
+  };
+
+  // Confirm Acceptance with Concurrency Protection
+  const handleConfirmAcceptance = async () => {
+    if (!reviewRequest) return;
     setAcceptError('');
     setIsAccepting(true);
 
     try {
-      const res = await acceptHelpRequest(request.id, activeExpert);
+      const res = await acceptHelpRequest(reviewRequest.id, activeExpert);
       if (!res.success) {
         setAcceptError(res.error || 'This request has already been accepted by another expert.');
       } else {
-        setAcceptSuccessMsg('You have successfully accepted this request! You can now chat or meet.');
+        setAcceptSuccessMsg('You have accepted this request! It has been moved to your Accepted Requests.');
         setTimeout(() => {
-          setInspectRequest(null);
+          setReviewRequest(null);
           setAcceptSuccessMsg('');
           setActiveTab('accepted');
-        }, 1200);
+        }, 1100);
       }
     } catch (err) {
       setAcceptError('An unexpected error occurred while accepting this request.');
@@ -126,7 +140,7 @@ export default function ExpertDashboardPage() {
               gap: '0.65rem',
               padding: '0.5rem 1rem',
               background: isAvailable ? '#ecfdf5' : '#f1f5f9',
-              border: `1px solid ${isAvailable ? '#a7f3d0' : '#cbd5e1'}`,
+              border: `1.5px solid ${isAvailable ? '#a7f3d0' : '#cbd5e1'}`,
               borderRadius: 'var(--radius-full)',
             }}
           >
@@ -146,10 +160,10 @@ export default function ExpertDashboardPage() {
             <button
               onClick={handleToggleAvailability}
               className="btn btn-secondary btn-sm"
-              style={{ padding: '0.25rem 0.6rem', fontSize: '0.75rem', height: 'auto' }}
+              style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem', height: 'auto' }}
               id="expert-availability-toggle-btn"
             >
-              <Power size={12} /> {isAvailable ? 'Turn Off' : 'Turn On'}
+              <Power size={12} /> {isAvailable ? 'Go Offline' : 'Go Online'}
             </button>
           </div>
         </div>
@@ -162,7 +176,7 @@ export default function ExpertDashboardPage() {
             background: '#fffbeb',
             border: '1px solid #fde68a',
             padding: '1rem 1.25rem',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: 'var(--radius-lg)',
             color: '#92400e',
             marginBottom: '2rem',
             display: 'flex',
@@ -177,12 +191,12 @@ export default function ExpertDashboardPage() {
         </div>
       )}
 
-      {/* Overview Stats */}
+      {/* Stats Cards Row */}
       <div className="stats-grid">
         <div 
           className="stat-card" 
           onClick={() => setActiveTab('matching')}
-          style={{ cursor: 'pointer', borderColor: activeTab === 'matching' ? 'var(--color-primary-500)' : 'var(--color-border)' }}
+          style={{ cursor: 'pointer', borderColor: activeTab === 'matching' ? 'var(--color-primary-600)' : 'var(--color-border)' }}
           id="stat-tab-matching"
         >
           <div>
@@ -197,14 +211,14 @@ export default function ExpertDashboardPage() {
         <div 
           className="stat-card" 
           onClick={() => setActiveTab('accepted')}
-          style={{ cursor: 'pointer', borderColor: activeTab === 'accepted' ? 'var(--color-primary-500)' : 'var(--color-border)' }}
+          style={{ cursor: 'pointer', borderColor: activeTab === 'accepted' ? 'var(--color-primary-600)' : 'var(--color-border)' }}
           id="stat-tab-accepted"
         >
           <div>
             <div className="stat-value" style={{ color: '#0d9488' }}>
               {acceptedRequests.length}
             </div>
-            <div className="stat-label">Accepted Requests</div>
+            <div className="stat-label">Total Accepted Requests</div>
           </div>
           <CheckCircle2 size={28} style={{ color: '#0d9488', opacity: 0.8 }} />
         </div>
@@ -212,7 +226,7 @@ export default function ExpertDashboardPage() {
         <div 
           className="stat-card" 
           onClick={() => setActiveTab('meetings')}
-          style={{ cursor: 'pointer', borderColor: activeTab === 'meetings' ? 'var(--color-primary-500)' : 'var(--color-border)' }}
+          style={{ cursor: 'pointer', borderColor: activeTab === 'meetings' ? 'var(--color-primary-600)' : 'var(--color-border)' }}
           id="stat-tab-meetings"
         >
           <div>
@@ -227,26 +241,26 @@ export default function ExpertDashboardPage() {
         <div className="stat-card">
           <div>
             <div className="stat-value">5.0 ★</div>
-            <div className="stat-label">Expert Mentorship Rating</div>
+            <div className="stat-label">Mentorship Rating</div>
           </div>
           <ShieldCheck size={28} style={{ color: '#f59e0b', opacity: 0.8 }} />
         </div>
       </div>
 
-      {/* Tabs Switcher */}
+      {/* Tab Switcher */}
       <div 
         style={{
           display: 'flex',
-          gap: '1rem',
-          borderBottom: '1px solid var(--color-border)',
+          gap: '1.25rem',
+          borderBottom: '1.5px solid var(--color-border)',
           marginBottom: '2rem',
         }}
       >
         <button
           onClick={() => setActiveTab('matching')}
           style={{
-            padding: '0.75rem 0.5rem',
-            fontWeight: 700,
+            padding: '0.85rem 0.5rem',
+            fontWeight: 800,
             fontSize: '1rem',
             color: activeTab === 'matching' ? 'var(--color-primary-600)' : 'var(--color-text-muted)',
             borderBottom: activeTab === 'matching' ? '3px solid var(--color-primary-600)' : '3px solid transparent',
@@ -259,8 +273,8 @@ export default function ExpertDashboardPage() {
         <button
           onClick={() => setActiveTab('accepted')}
           style={{
-            padding: '0.75rem 0.5rem',
-            fontWeight: 700,
+            padding: '0.85rem 0.5rem',
+            fontWeight: 800,
             fontSize: '1rem',
             color: activeTab === 'accepted' ? 'var(--color-primary-600)' : 'var(--color-text-muted)',
             borderBottom: activeTab === 'accepted' ? '3px solid var(--color-primary-600)' : '3px solid transparent',
@@ -273,8 +287,8 @@ export default function ExpertDashboardPage() {
         <button
           onClick={() => setActiveTab('meetings')}
           style={{
-            padding: '0.75rem 0.5rem',
-            fontWeight: 700,
+            padding: '0.85rem 0.5rem',
+            fontWeight: 800,
             fontSize: '1rem',
             color: activeTab === 'meetings' ? 'var(--color-primary-600)' : 'var(--color-text-muted)',
             borderBottom: activeTab === 'meetings' ? '3px solid var(--color-primary-600)' : '3px solid transparent',
@@ -285,30 +299,30 @@ export default function ExpertDashboardPage() {
         </button>
       </div>
 
-      {/* TAB CONTENT 1: NEW MATCHING REQUESTS */}
+      {/* TAB 1: NEW MATCHING REQUESTS */}
       {activeTab === 'matching' && (
         <div className="animate-fade-in" id="matching-requests-section">
           {!isAvailable ? (
-            <div className="glass-panel" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
+            <div className="clean-card" style={{ padding: '3.5rem 2rem', textAlign: 'center' }}>
               <Power size={36} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>
                 You are currently marked as Unavailable
               </h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                You will not receive new matching requests while toggled off. Turn on availability when ready to accept.
+                Toggle availability on when you are ready to receive new questions.
               </p>
               <button onClick={handleToggleAvailability} className="btn btn-primary">
                 Turn On Availability
               </button>
             </div>
           ) : matchingRequests.length === 0 ? (
-            <div className="glass-panel" style={{ padding: '3.5rem 2rem', textAlign: 'center' }} id="no-matching-requests">
+            <div className="clean-card" style={{ padding: '3.5rem 2rem', textAlign: 'center' }} id="no-matching-requests">
               <Clock size={36} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                No new matching requests
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>
+                No unaccepted matching requests
               </h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', maxWidth: '520px', margin: '0 auto' }}>
-                Requests will appear here as soon as a help seeker submits a question in your approved topics. (You can submit a test request from the Get Help page to see it route here!).
+                All matching requests have been accepted, or no new questions in your topics have been submitted yet. Once a seeker submits a question in your area, it will appear here instantly.
               </p>
             </div>
           ) : (
@@ -321,21 +335,22 @@ export default function ExpertDashboardPage() {
                   <div key={req.id} className="item-card" id={`expert-matching-card-${req.id}`}>
                     <div className="flex justify-between items-center" style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
                       <div className="flex items-center gap-2">
-                        <span style={{ fontWeight: 700, color: 'var(--color-primary-700)', fontSize: '0.9rem' }}>
+                        <span style={{ fontWeight: 800, color: 'var(--color-primary-600)', fontSize: '0.9rem' }}>
                           {cat?.name}
                         </span>
                         <span style={{ color: 'var(--color-text-dim)' }}>•</span>
-                        <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                        <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>
                           {top?.name}
                         </span>
                         {req.education_level && (
                           <span 
                             style={{
                               fontSize: '0.75rem',
-                              background: 'var(--color-bg-subtle)',
+                              background: '#f1f5f9',
                               padding: '2px 8px',
                               borderRadius: 'var(--radius-full)',
                               border: '1px solid var(--color-border)',
+                              fontWeight: 600,
                             }}
                           >
                             {req.education_level}
@@ -345,7 +360,7 @@ export default function ExpertDashboardPage() {
 
                       <div className="flex items-center gap-2">
                         <span style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>
-                          Prefers: <strong style={{ textTransform: 'capitalize' }}>{req.preferred_session_type?.replace('_', ' ')}</strong>
+                          Format: <strong style={{ textTransform: 'capitalize' }}>{req.preferred_session_type?.replace('_', ' ')}</strong>
                         </span>
                         <StatusBadge status="finding_expert" />
                       </div>
@@ -357,18 +372,15 @@ export default function ExpertDashboardPage() {
 
                     <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
                       <span style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>
-                        Submitted {new Date(req.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        From: {req.seeker_name} • Submitted {new Date(req.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
+                      {/* Secondary button to review, keeping button hierarchy clean */}
                       <button
-                        onClick={() => {
-                          setInspectRequest(req);
-                          setAcceptError('');
-                          setAcceptSuccessMsg('');
-                        }}
+                        onClick={() => handleStartReview(req)}
                         className="btn btn-primary btn-sm"
-                        id={`view-request-btn-${req.id}`}
+                        id={`review-request-btn-${req.id}`}
                       >
-                        View Request <ChevronRight size={14} />
+                        Review & Accept <ChevronRight size={14} />
                       </button>
                     </div>
                   </div>
@@ -379,17 +391,17 @@ export default function ExpertDashboardPage() {
         </div>
       )}
 
-      {/* TAB CONTENT 2: ACCEPTED REQUESTS */}
+      {/* TAB 2: ACCEPTED REQUESTS */}
       {activeTab === 'accepted' && (
         <div className="animate-fade-in" id="accepted-requests-section">
           {acceptedRequests.length === 0 ? (
-            <div className="glass-panel" style={{ padding: '3.5rem 2rem', textAlign: 'center' }}>
+            <div className="clean-card" style={{ padding: '3.5rem 2rem', textAlign: 'center' }}>
               <CheckCircle2 size={36} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>
                 No accepted requests yet
               </h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
-                Requests you accept will appear here with active chat access.
+                Requests you review and accept will appear here with instant consultation chat.
               </p>
             </div>
           ) : (
@@ -403,20 +415,20 @@ export default function ExpertDashboardPage() {
                   <div key={req.id} className="item-card" id={`expert-accepted-card-${req.id}`}>
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <strong style={{ fontSize: '1rem' }}>{req.seeker_name}</strong>
+                        <strong style={{ fontSize: '1.05rem' }}>{req.seeker_name}</strong>
                         <span style={{ color: 'var(--color-text-dim)' }}>•</span>
-                        <span style={{ color: 'var(--color-primary-700)', fontWeight: 600 }}>{top?.name}</span>
+                        <span style={{ color: 'var(--color-primary-600)', fontWeight: 700 }}>{top?.name}</span>
                       </div>
                       <StatusBadge status={req.status} />
                     </div>
 
-                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', lineHeight: '1.45' }}>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
                       {req.inquiry}
                     </p>
 
                     <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
                       <span style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>
-                        Category: {cat?.name}
+                        Category: {cat?.name} {req.education_level ? `(${req.education_level})` : ''}
                       </span>
                       <div className="flex gap-2">
                         {conv && (
@@ -430,10 +442,11 @@ export default function ExpertDashboardPage() {
                         )}
                         <button
                           onClick={() => {
-                            setInspectRequest(req);
+                            setMeetingTargetRequest(req);
                             setIsMeetingModalOpen(true);
                           }}
                           className="btn btn-secondary btn-sm"
+                          id={`expert-meeting-btn-${req.id}`}
                         >
                           <Calendar size={14} /> Schedule Meeting
                         </button>
@@ -447,17 +460,17 @@ export default function ExpertDashboardPage() {
         </div>
       )}
 
-      {/* TAB CONTENT 3: UPCOMING MEETINGS */}
+      {/* TAB 3: UPCOMING MEETINGS */}
       {activeTab === 'meetings' && (
         <div className="animate-fade-in" id="meetings-section">
           {expertAppointments.length === 0 ? (
-            <div className="glass-panel" style={{ padding: '3.5rem 2rem', textAlign: 'center' }}>
+            <div className="clean-card" style={{ padding: '3.5rem 2rem', textAlign: 'center' }}>
               <Calendar size={36} style={{ color: '#94a3b8', margin: '0 auto 1rem' }} />
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>
                 No scheduled meetings yet
               </h3>
               <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
-                Appointments arranged between you and seekers will appear here with call links.
+                Consultation sessions arranged with seekers will appear here with one-click call links.
               </p>
             </div>
           ) : (
@@ -469,7 +482,7 @@ export default function ExpertDashboardPage() {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <Calendar size={18} style={{ color: '#7c3aed' }} />
-                        <strong>Meeting with {req?.seeker_name || 'Seeker'}</strong>
+                        <strong style={{ fontSize: '1rem' }}>Meeting with {req?.seeker_name || 'Seeker'}</strong>
                       </div>
                       <StatusBadge status={appt.status} />
                     </div>
@@ -481,7 +494,7 @@ export default function ExpertDashboardPage() {
                     </div>
 
                     {appt.note && (
-                      <div style={{ fontSize: '0.85rem', background: 'var(--color-bg-subtle)', padding: '0.5rem 0.75rem', borderRadius: '4px' }}>
+                      <div style={{ fontSize: '0.85rem', background: '#f8fafc', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)' }}>
                         Note: {appt.note}
                       </div>
                     )}
@@ -507,37 +520,31 @@ export default function ExpertDashboardPage() {
         </div>
       )}
 
-      {/* INSPECT & ACCEPT REQUEST MODAL */}
-      {inspectRequest && !activeChatConvId && !isMeetingModalOpen && (
+      {/* ACCEPTANCE REVIEW MODAL */}
+      {reviewRequest && !activeChatConvId && !isMeetingModalOpen && (
         <Modal
-          isOpen={Boolean(inspectRequest)}
-          onClose={() => setInspectRequest(null)}
-          title="Matching Help Request"
+          isOpen={Boolean(reviewRequest)}
+          onClose={() => setReviewRequest(null)}
+          title="Review & Accept Request"
           footer={
-            inspectRequest.assigned_expert_id ? (
-              <button className="btn btn-secondary" onClick={() => setInspectRequest(null)}>
-                Close
+            <div className="flex gap-2">
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => setReviewRequest(null)} 
+                disabled={isAccepting}
+              >
+                Cancel
               </button>
-            ) : (
-              <div className="flex gap-2">
-                <button 
-                  className="btn btn-secondary" 
-                  onClick={() => setInspectRequest(null)} 
-                  disabled={isAccepting}
-                >
-                  Decline
-                </button>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleAcceptRequest(inspectRequest)}
-                  disabled={isAccepting || !isApproved}
-                  id="modal-accept-request-btn"
-                >
-                  <CheckCircle2 size={16} />
-                  {isAccepting ? 'Accepting...' : 'Accept Request'}
-                </button>
-              </div>
-            )
+              <button
+                className="btn btn-primary"
+                onClick={handleConfirmAcceptance}
+                disabled={isAccepting || !isApproved}
+                id="modal-confirm-acceptance-btn"
+              >
+                <CheckCircle2 size={16} />
+                {isAccepting ? 'Accepting...' : 'Confirm & Accept Request'}
+              </button>
+            </div>
           }
         >
           <div className="flex flex-col gap-3">
@@ -580,63 +587,74 @@ export default function ExpertDashboardPage() {
               </div>
             )}
 
-            <div className="flex justify-between items-center">
-              <span style={{ color: 'var(--color-text-muted)' }}>Help Seeker</span>
-              <strong>{inspectRequest.seeker_name}</strong>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <span style={{ color: 'var(--color-text-muted)' }}>Category</span>
-              <strong>{categories.find(c => c.id === inspectRequest.category_id)?.name}</strong>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <span style={{ color: 'var(--color-text-muted)' }}>Topic</span>
-              <strong>{topics.find(t => t.id === inspectRequest.topic_id)?.name}</strong>
-            </div>
-
-            {inspectRequest.education_level && (
+            <div 
+              style={{
+                background: '#f8fafc',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-md)',
+                padding: '1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                fontSize: '0.9rem',
+              }}
+            >
               <div className="flex justify-between items-center">
-                <span style={{ color: 'var(--color-text-muted)' }}>Education Level</span>
-                <strong>{inspectRequest.education_level}</strong>
+                <span style={{ color: 'var(--color-text-muted)' }}>Help Seeker:</span>
+                <strong>{reviewRequest.seeker_name}</strong>
               </div>
-            )}
 
-            <div className="flex justify-between items-center">
-              <span style={{ color: 'var(--color-text-muted)' }}>Preferred Session Format</span>
-              <strong style={{ textTransform: 'capitalize' }}>
-                {inspectRequest.preferred_session_type?.replace('_', ' ')}
-              </strong>
+              <div className="flex justify-between items-center">
+                <span style={{ color: 'var(--color-text-muted)' }}>Category:</span>
+                <strong>{categories.find(c => c.id === reviewRequest.category_id)?.name}</strong>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span style={{ color: 'var(--color-text-muted)' }}>Specific Topic:</span>
+                <strong>{topics.find(t => t.id === reviewRequest.topic_id)?.name}</strong>
+              </div>
+
+              {reviewRequest.education_level && (
+                <div className="flex justify-between items-center">
+                  <span style={{ color: 'var(--color-text-muted)' }}>Education Level:</span>
+                  <strong>{reviewRequest.education_level}</strong>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center">
+                <span style={{ color: 'var(--color-text-muted)' }}>Preferred Format:</span>
+                <strong style={{ textTransform: 'capitalize' }}>
+                  {reviewRequest.preferred_session_type?.replace('_', ' ')}
+                </strong>
+              </div>
             </div>
 
             <div>
               <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', display: 'block', marginBottom: '0.25rem' }}>
-                Inquiry Description:
+                Seeker's Inquiry:
               </span>
               <div 
                 style={{
-                  background: 'var(--color-bg-subtle)',
-                  padding: '1rem',
-                  borderRadius: 'var(--radius-sm)',
+                  background: '#ffffff',
+                  padding: '0.85rem 1rem',
+                  borderRadius: 'var(--radius-md)',
                   fontSize: '0.95rem',
                   lineHeight: '1.5',
-                  border: '1px solid var(--color-border)',
+                  border: '1.5px solid var(--color-border)',
                 }}
               >
-                {inspectRequest.inquiry}
+                {reviewRequest.inquiry}
               </div>
             </div>
 
-            {!inspectRequest.assigned_expert_id && (
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)', marginTop: '0.5rem' }}>
-                Clicking "Accept Request" assigns this request exclusively to you and opens a direct chat with the seeker. Concurrency checks ensure only one expert can accept.
-              </p>
-            )}
+            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)', marginTop: '0.25rem', lineHeight: '1.4' }}>
+              Upon confirming, this request is assigned exclusively to you and immediately removed from the unaccepted pool.
+            </p>
           </div>
         </Modal>
       )}
 
-      {/* Chat Modal */}
+      {/* CHAT MODAL */}
       {activeChatConvId && (
         <Modal
           isOpen={Boolean(activeChatConvId)}
@@ -652,13 +670,16 @@ export default function ExpertDashboardPage() {
         </Modal>
       )}
 
-      {/* Meeting Modal */}
-      {isMeetingModalOpen && inspectRequest && (
+      {/* MEETING MODAL */}
+      {isMeetingModalOpen && meetingTargetRequest && (
         <MeetingModal
           isOpen={isMeetingModalOpen}
-          onClose={() => setIsMeetingModalOpen(false)}
-          request={inspectRequest}
-          conversationId={conversations.find(c => c.request_id === inspectRequest.id)?.id}
+          onClose={() => {
+            setIsMeetingModalOpen(false);
+            setMeetingTargetRequest(null);
+          }}
+          request={meetingTargetRequest}
+          conversationId={conversations.find(c => c.request_id === meetingTargetRequest.id)?.id}
           expert={activeExpert}
         />
       )}
