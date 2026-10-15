@@ -18,7 +18,6 @@ import {
   MessageSquare,
   Video,
   PhoneCall,
-  Sparkles,
   ShieldCheck
 } from 'lucide-react';
 
@@ -35,7 +34,7 @@ const ICON_MAP = {
 
 export default function GetHelpPage() {
   const { categories, topics, submitHelpRequest } = useData();
-  const { currentUser } = useAuth();
+  const { currentUser, signIn } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -53,7 +52,7 @@ export default function GetHelpPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Pre-fill from query param if provided
+  // Pre-fill from query param
   useEffect(() => {
     const preCategory = searchParams.get('category');
     if (preCategory && categories.some(c => c.id === preCategory)) {
@@ -61,7 +60,7 @@ export default function GetHelpPage() {
     }
   }, [searchParams, categories]);
 
-  // Update name/email if currentUser changes
+  // Update name/email if currentUser exists
   useEffect(() => {
     if (currentUser) {
       if (!name) setName(currentUser.full_name || '');
@@ -117,10 +116,17 @@ export default function GetHelpPage() {
         ? `[Custom: ${customCategoryText}] ${inquiry.trim()}`
         : inquiry.trim();
 
+      // If user is not yet logged in, register them as the seeker with their entered name/email
+      let activeUserId = currentUser?.id;
+      if (!currentUser) {
+        const authRes = await signUp(email.trim(), 'temporary-guest-password', name.trim(), 'seeker');
+        activeUserId = authRes?.user?.id;
+      }
+
       const newRequest = await submitHelpRequest({
-        seeker_id: currentUser?.id || null,
-        seeker_name: name,
-        seeker_email: email,
+        seeker_id: activeUserId || null,
+        seeker_name: name.trim(),
+        seeker_email: email.trim(),
         category_id: categoryId,
         topic_id: topicId || relevantTopics[0]?.id || '22222222-0008-0000-0000-000000000001',
         education_level: selectedCategory?.has_education_level ? educationLevel : null,
@@ -137,19 +143,15 @@ export default function GetHelpPage() {
   };
 
   return (
-    <div className="hero-gradient-bg" style={{ minHeight: 'calc(100vh - 4.5rem)', padding: '3rem 1.5rem 5rem' }}>
-      <div className="container" style={{ maxWidth: '860px' }}>
+    <div style={{ background: '#ffffff', minHeight: 'calc(100vh - 4.5rem)', padding: '4rem 1.5rem 6rem' }}>
+      <div className="container" style={{ maxWidth: '820px' }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div className="hero-pill" style={{ margin: '0 auto 1rem' }}>
-            <Sparkles size={14} style={{ color: 'var(--color-primary-600)' }} />
-            <span>Fast Expert Matching</span>
-          </div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-            Request Expert Guidance
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.75rem', color: '#000000' }}>
+            Request Help
           </h1>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '1.05rem', maxWidth: '580px', margin: '0 auto' }}>
-            Select your category, pick a topic, and describe what you need help with. We'll automatically route your question to available verified mentors.
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '1.05rem', maxWidth: '580px', margin: '0 auto', lineHeight: '1.6' }}>
+            Select the area where you need assistance, pick your topic, and tell us your question.
           </p>
         </div>
 
@@ -157,16 +159,16 @@ export default function GetHelpPage() {
         {errorMsg && (
           <div 
             style={{
-              background: '#fee2e2',
+              background: '#fef2f2',
               border: '1px solid #fecaca',
               color: '#dc2626',
-              padding: '0.85rem 1.25rem',
+              padding: '1rem 1.5rem',
               borderRadius: 'var(--radius-md)',
               fontSize: '0.9rem',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.65rem',
-              marginBottom: '1.5rem',
+              gap: '0.75rem',
+              marginBottom: '2rem',
             }}
             id="get-help-error-alert"
           >
@@ -176,32 +178,16 @@ export default function GetHelpPage() {
         )}
 
         <form onSubmit={handleSubmit} className="streamlined-form-card" id="get-help-unified-form">
-          {/* SECTION 1: CHOOSE AREA & TOPIC */}
-          <div style={{ marginBottom: '2.5rem' }}>
-            <div className="flex items-center gap-2" style={{ marginBottom: '0.75rem' }}>
-              <span 
-                style={{
-                  width: '1.75rem',
-                  height: '1.75rem',
-                  borderRadius: 'var(--radius-full)',
-                  background: 'var(--color-primary-600)',
-                  color: '#ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.85rem',
-                  fontWeight: 800,
-                }}
-              >
-                1
-              </span>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Which area do you need help with?</h2>
-            </div>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-              Select a category to view relevant topics:
+          {/* SECTION 1: AREA & TOPIC */}
+          <div style={{ marginBottom: '3rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#000000' }}>
+              1. Which area do you need help with?
+            </h2>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+              Select a category to view matching topics:
             </p>
 
-            {/* Category selection cards */}
+            {/* Category selection cards with generous spacing */}
             <div className="category-pill-grid">
               {categories.filter(c => c.is_active).map((cat) => {
                 const Icon = ICON_MAP[cat.icon] || HelpCircle;
@@ -218,14 +204,10 @@ export default function GetHelpPage() {
                     }}
                     id={`cat-card-${cat.slug}`}
                   >
-                    <div 
-                      style={{
-                        color: isSelected ? 'var(--color-primary-600)' : 'var(--color-text-muted)',
-                      }}
-                    >
-                      <Icon size={24} />
+                    <div style={{ color: isSelected ? 'var(--color-primary-600)' : '#000000' }}>
+                      <Icon size={22} />
                     </div>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 700, lineHeight: '1.2' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, lineHeight: '1.3' }}>
                       {cat.name}
                     </span>
                   </div>
@@ -237,15 +219,15 @@ export default function GetHelpPage() {
             {categoryId && relevantTopics.length > 0 && selectedCategory?.slug !== 'other' && (
               <div 
                 style={{
-                  background: '#f8fafc',
-                  border: '1.5px solid var(--color-border)',
-                  borderRadius: 'var(--radius-lg)',
-                  padding: '1.25rem',
-                  marginTop: '1rem',
+                  background: '#f9fafb',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '1.5rem',
+                  marginTop: '1.5rem',
                 }}
                 className="animate-fade-in"
               >
-                <label className="form-label" style={{ marginBottom: '0.5rem', display: 'block' }}>
+                <label className="form-label" style={{ marginBottom: '0.75rem', display: 'block' }}>
                   Select specific topic in {selectedCategory.name}:
                 </label>
                 <div className="topic-chips-container">
@@ -272,7 +254,7 @@ export default function GetHelpPage() {
 
             {/* If Other Category */}
             {selectedCategory?.slug === 'other' && (
-              <div className="form-group" style={{ marginTop: '1rem' }}>
+              <div className="form-group" style={{ marginTop: '1.5rem' }}>
                 <label className="form-label">What kind of assistance do you need?</label>
                 <input
                   type="text"
@@ -287,9 +269,9 @@ export default function GetHelpPage() {
 
             {/* Education Level (if applicable) */}
             {selectedCategory?.has_education_level && (
-              <div className="form-group" style={{ marginTop: '1.25rem' }}>
+              <div className="form-group" style={{ marginTop: '1.75rem' }}>
                 <label className="form-label">What is your current education level?</label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem' }}>
                   {EDUCATION_LEVELS.map((lvl) => {
                     const isLevelSelected = educationLevel === lvl;
                     return (
@@ -312,29 +294,13 @@ export default function GetHelpPage() {
             )}
           </div>
 
-          {/* SECTION 2: QUESTION & DETAILS */}
-          <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem', marginBottom: '2.5rem' }}>
-            <div className="flex items-center gap-2" style={{ marginBottom: '0.75rem' }}>
-              <span 
-                style={{
-                  width: '1.75rem',
-                  height: '1.75rem',
-                  borderRadius: 'var(--radius-full)',
-                  background: 'var(--color-primary-600)',
-                  color: '#ffffff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.85rem',
-                  fontWeight: 800,
-                }}
-              >
-                2
-              </span>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>Explain your question & contact</h2>
-            </div>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-              Explain what you are struggling with. A few sentences are enough.
+          {/* SECTION 2: QUESTION & CONTACT */}
+          <div className="form-section-divider">
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: '#000000' }}>
+              2. Explain your question & your details
+            </h2>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginBottom: '1.75rem' }}>
+              Explain what you are trying to do or what you are struggling with. A few sentences are enough.
             </p>
 
             <div className="form-group">
@@ -353,8 +319,6 @@ export default function GetHelpPage() {
                     ? "e.g., I'm working in customer service and want to transition into software development. I need guidance on where to start."
                     : selectedCategory?.slug === 'entrepreneurship'
                     ? "e.g., I have a business idea and need help understanding how to apply for business funding."
-                    : selectedCategory?.slug === 'product-design'
-                    ? "e.g., I have a product design portfolio but need help improving my case studies before applying for jobs."
                     : "e.g., Explain what you are trying to do..."
                 }
                 value={inquiry}
@@ -362,10 +326,10 @@ export default function GetHelpPage() {
               />
             </div>
 
-            {/* Preferred consultation session format */}
-            <div className="form-group" style={{ marginTop: '1.25rem' }}>
+            {/* Preferred session format */}
+            <div className="form-group" style={{ marginTop: '1.75rem' }}>
               <label className="form-label">Preferred Session Format</label>
-              <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+              <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                 {[
                   { id: 'chat', label: 'In-App Chat', icon: MessageSquare },
                   { id: 'video_meeting', label: 'Video Call', icon: Video },
@@ -379,7 +343,7 @@ export default function GetHelpPage() {
                       type="button"
                       onClick={() => setPreferredSessionType(type.id)}
                       className={`btn ${isChecked ? 'btn-primary' : 'btn-secondary'}`}
-                      style={{ padding: '0.65rem', fontSize: '0.85rem' }}
+                      style={{ padding: '0.85rem 1rem', fontSize: '0.9rem' }}
                       id={`session-type-${type.id}`}
                     >
                       <Icon size={16} />
@@ -390,9 +354,9 @@ export default function GetHelpPage() {
               </div>
             </div>
 
-            {/* Seeker Contact Info */}
-            <div className="grid gap-3" style={{ gridTemplateColumns: '1fr 1fr', marginTop: '1.25rem' }}>
-              <div className="form-group">
+            {/* Contact Info */}
+            <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr', marginTop: '1.75rem' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label" htmlFor="seeker-name">Your Full Name</label>
                 <input
                   id="seeker-name"
@@ -405,7 +369,7 @@ export default function GetHelpPage() {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label" htmlFor="seeker-email">Email Address</label>
                 <input
                   id="seeker-email"
@@ -420,11 +384,12 @@ export default function GetHelpPage() {
             </div>
           </div>
 
-          {/* SUBMIT ACTION - High Visual Hierarchy Button */}
+          {/* SUBMIT BUTTON */}
           <div 
             style={{ 
               borderTop: '1px solid var(--color-border)', 
-              paddingTop: '1.75rem', 
+              paddingTop: '2.5rem', 
+              marginTop: '2.5rem',
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'space-between',
@@ -437,7 +402,7 @@ export default function GetHelpPage() {
               <span>Only approved mentors in this topic receive your inquiry.</span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Link to="/" className="btn btn-secondary">
                 Cancel
               </Link>
@@ -448,7 +413,7 @@ export default function GetHelpPage() {
                 id="submit-help-request-btn"
               >
                 <CheckCircle2 size={18} />
-                <span>{isSubmitting ? 'Routing Request...' : 'Submit Help Request'}</span>
+                <span>{isSubmitting ? 'Submitting...' : 'Submit Request'}</span>
               </button>
             </div>
           </div>

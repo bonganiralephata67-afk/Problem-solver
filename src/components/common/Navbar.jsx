@@ -5,12 +5,8 @@ import {
   Compass, 
   Menu, 
   X, 
-  HelpCircle, 
-  UserCheck, 
   LogOut, 
-  LayoutDashboard, 
-  ShieldCheck, 
-  FileText 
+  User
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -41,47 +37,62 @@ export default function Navbar() {
           <span>The Problem Solvers</span>
         </Link>
 
-        {/* Desktop Navigation Links */}
+        {/* Center Links: Just Home and How It Works */}
         <nav className="nav-links">
-          <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} id="nav-link-home">
+          <Link 
+            to="/" 
+            className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} 
+            id="nav-link-home"
+          >
             Home
           </Link>
-          <a href="#how-it-works" onClick={handleHowItWorksClick} className="nav-link" id="nav-link-how-it-works">
+
+          <a 
+            href="#how-it-works" 
+            onClick={handleHowItWorksClick} 
+            className="nav-link" 
+            id="nav-link-how-it-works"
+          >
             How It Works
           </a>
-          <Link 
-            to="/expert/register" 
-            className={`nav-link ${location.pathname === '/expert/register' ? 'active' : ''}`}
-            id="nav-link-become-expert"
-          >
-            Become an Expert
-          </Link>
 
-          {/* Role specific links */}
+          {/* Only show contextual link if explicitly logged in */}
           {currentUser?.role === 'seeker' && (
-            <Link to="/my-requests" className={`nav-link ${location.pathname === '/my-requests' ? 'active' : ''}`} id="nav-link-my-requests">
+            <Link 
+              to="/my-requests" 
+              className={`nav-link ${location.pathname === '/my-requests' ? 'active' : ''}`} 
+              id="nav-link-my-requests"
+            >
               My Requests
             </Link>
           )}
 
           {currentUser?.role === 'expert' && (
-            <Link to="/expert/dashboard" className={`nav-link ${location.pathname === '/expert/dashboard' ? 'active' : ''}`} id="nav-link-expert-dashboard">
+            <Link 
+              to="/expert/dashboard" 
+              className={`nav-link ${location.pathname === '/expert/dashboard' ? 'active' : ''}`} 
+              id="nav-link-expert-dashboard"
+            >
               Expert Dashboard
             </Link>
           )}
 
           {currentUser?.role === 'admin' && (
-            <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`} id="nav-link-admin">
+            <Link 
+              to="/admin" 
+              className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`} 
+              id="nav-link-admin"
+            >
               Admin Portal
             </Link>
           )}
         </nav>
 
-        {/* Actions */}
+        {/* Right Actions */}
         <div className="nav-actions">
           {currentUser ? (
             <div className="flex items-center gap-3">
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-muted)' }}>
+              <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-text-main)' }}>
                 {currentUser.full_name}
               </span>
               <button
@@ -89,20 +100,21 @@ export default function Navbar() {
                 className="btn btn-secondary btn-sm"
                 title="Sign Out"
                 id="nav-sign-out-btn"
+                style={{ padding: '0.4rem 0.65rem' }}
               >
                 <LogOut size={14} />
               </button>
             </div>
           ) : (
-            <Link to="/auth" className="btn btn-secondary btn-sm" id="nav-sign-in-btn">
+            <Link 
+              to="/auth" 
+              className="nav-link" 
+              style={{ fontWeight: 600, fontSize: '0.92rem' }}
+              id="nav-sign-in-btn"
+            >
               Sign In
             </Link>
           )}
-
-          {/* Prominent Get Help CTA button */}
-          <Link to="/get-help" className="btn btn-primary" id="nav-get-help-btn">
-            Get Help
-          </Link>
 
           {/* Mobile menu toggle */}
           <button
@@ -131,17 +143,25 @@ export default function Navbar() {
         >
           <Link to="/" onClick={() => setMobileMenuOpen(false)} className="nav-link">Home</Link>
           <a href="#how-it-works" onClick={handleHowItWorksClick} className="nav-link">How It Works</a>
-          <Link to="/expert/register" onClick={() => setMobileMenuOpen(false)} className="nav-link">Become an Expert</Link>
-          <Link to="/my-requests" onClick={() => setMobileMenuOpen(false)} className="nav-link">My Requests</Link>
-          {currentUser?.role === 'expert' && (
-            <Link to="/expert/dashboard" onClick={() => setMobileMenuOpen(false)} className="nav-link">Expert Dashboard</Link>
+          
+          {currentUser ? (
+            <>
+              {currentUser.role === 'seeker' && (
+                <Link to="/my-requests" onClick={() => setMobileMenuOpen(false)} className="nav-link">My Requests</Link>
+              )}
+              {currentUser.role === 'expert' && (
+                <Link to="/expert/dashboard" onClick={() => setMobileMenuOpen(false)} className="nav-link">Expert Dashboard</Link>
+              )}
+              {currentUser.role === 'admin' && (
+                <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="nav-link">Admin Portal</Link>
+              )}
+              <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="btn btn-secondary btn-sm" style={{ width: 'fit-content' }}>
+                Sign Out ({currentUser.full_name})
+              </button>
+            </>
+          ) : (
+            <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="nav-link">Sign In</Link>
           )}
-          {currentUser?.role === 'admin' && (
-            <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="nav-link">Admin Portal</Link>
-          )}
-          <Link to="/get-help" onClick={() => setMobileMenuOpen(false)} className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
-            Get Help
-          </Link>
         </div>
       )}
     </header>

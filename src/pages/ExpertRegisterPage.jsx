@@ -18,7 +18,7 @@ import {
 
 export default function ExpertRegisterPage() {
   const { categories, topics, registerExpertApplication } = useData();
-  const { currentUser } = useAuth();
+  const { currentUser, signUp } = useAuth();
   const navigate = useNavigate();
 
   // Basic Info
@@ -66,7 +66,7 @@ export default function ExpertRegisterPage() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
@@ -98,6 +98,10 @@ export default function ExpertRegisterPage() {
         education_levels: selectedEducationLevels,
         session_types: sessionTypes,
       });
+
+      if (!currentUser) {
+        await signUp(email.trim(), 'expert-password-123', fullName.trim(), 'expert');
+      }
 
       setIsSubmitted(true);
     } catch (err) {

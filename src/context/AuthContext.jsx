@@ -5,13 +5,29 @@ import { DEMO_USERS } from '../data/initialData';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  // Default to the demo seeker user initially for easy testing
+  // User requested: hide Thabo Mokoena until the user has registered as the user who will get help or the expert who will be helping
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('tps_current_user');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) { /* ignore */ }
+      try {
+        const parsed = JSON.parse(saved);
+        // If it was the pre-stored demo persona 'Thabo Mokoena' or any demo seed, purge it!
+        if (
+          parsed?.full_name === 'Thabo Mokoena' ||
+          parsed?.email === 'thabo.maths@expert.org' ||
+          parsed?.email?.includes('@expert.org') ||
+          parsed?.email?.includes('@seeker.org') ||
+          parsed?.is_demo_seed
+        ) {
+          localStorage.removeItem('tps_current_user');
+          return null;
+        }
+        return parsed;
+      } catch (e) {
+        localStorage.removeItem('tps_current_user');
+      }
     }
-    return DEMO_USERS[0]; // Sipho Ndlovu (Seeker)
+    return null; // Guest by default!
   });
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -77,14 +93,13 @@ export function AuthProvider({ children }) {
       if (error) throw error;
       return data;
     } else {
-      // Demo authentication: find matching user or create temporary
+      // Find matching demo user or create seeker account
       const matched = DEMO_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
       if (matched) {
         setCurrentUser(matched);
         localStorage.setItem('tps_current_user', JSON.stringify(matched));
         return { user: matched };
       }
-      // Create new demo user
       const newUser = {
         id: crypto.randomUUID(),
         email,
@@ -125,14 +140,16 @@ export function AuthProvider({ children }) {
     if (isSupabaseConfigured && supabase) {
       await supabase.auth.signOut();
     }
-    // In demo mode, reset to guest or seeker
-    const defaultUser = DEMO_USERS[0];
-    setCurrentUser(defaultUser);
-    localStorage.setItem('tps_current_user', JSON.stringify(defaultUser));
+    setCurrentUser(null);
+    localStorage.removeItem('tps_current_user');
   };
 
-  // Demo Persona Switcher (For quick pair-testing in UI)
   const switchDemoPersona = (user) => {
+    if (!user) {
+      setCurrentUser(null);
+      localStorage.removeItem('tps_current_user');
+      return;
+    }
     setCurrentUser(user);
     localStorage.setItem('tps_current_user', JSON.stringify(user));
   };
