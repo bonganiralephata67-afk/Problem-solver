@@ -32,7 +32,7 @@ export default function Navbar() {
   }, []);
 
   const handleContactUs = () => {
-    window.dispatchEvent(new CustomEvent('open-support-bot', { detail: { showContactForm: true } }));
+    window.dispatchEvent(new CustomEvent('open-contact-modal'));
   };
 
   const handleHowItWorksClick = (e) => {

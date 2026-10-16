@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import SupportBot from '../components/support/SupportBot';
+import ContactModal from '../components/common/ContactModal';
 
 export default function MainLayout() {
   return (
@@ -11,6 +12,7 @@ export default function MainLayout() {
       <main style={{ flex: 1 }}>
         <Outlet />
       </main>
+      <ContactModal />
       <SupportBot />
       <Footer />
     </div>

@@ -34,7 +34,7 @@ export default function Footer() {
           <div>
             <h4 className="footer-title">Support</h4>
             <ul className="footer-links">
-              <li><a href="#support" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent('open-support-bot')); }}>Contact Support</a></li>
+              <li><a href="#contact" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent('open-contact-modal')); }}>Contact Us</a></li>
               <li><Link to="/auth">Sign In</Link></li>
               <li><Link to="/admin">Admin Portal</Link></li>
             </ul>

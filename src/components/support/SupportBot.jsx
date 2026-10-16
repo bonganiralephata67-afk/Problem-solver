@@ -183,23 +183,23 @@ export default function SupportBot() {
 
           {/* Body */}
           <div className="support-bot-body">
-            {/* Automated Guidance disclaimer */}
+            {/* Guidance disclaimer */}
             <div 
               style={{
-                background: 'var(--color-primary-50)',
-                border: '1px solid var(--color-primary-200)',
+                background: 'rgba(37, 99, 235, 0.12)',
+                border: '1px solid rgba(37, 99, 235, 0.25)',
                 borderRadius: 'var(--radius-sm)',
                 padding: '0.65rem 0.85rem',
                 fontSize: '0.78rem',
-                color: 'var(--color-primary-900)',
+                color: '#93c5fd',
                 display: 'flex',
                 gap: '0.5rem',
                 alignItems: 'flex-start',
               }}
             >
-              <Info size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+              <Info size={16} style={{ flexShrink: 0, marginTop: '2px', color: '#60a5fa' }} />
               <span>
-                This is an automated support assistant. Select a topic or submit a message to our support staff.
+                Need help? Select an automated topic below or reach out to our team directly.
               </span>
             </div>
 
@@ -212,7 +212,7 @@ export default function SupportBot() {
                   setIsSubmitted(false);
                 }}
                 className="btn btn-secondary btn-sm"
-                style={{ alignSelf: 'flex-start', padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                style={{ alignSelf: 'flex-start', padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}
                 id="support-bot-back-btn"
               >
                 <ChevronLeft size={14} /> Back to questions
@@ -222,7 +222,7 @@ export default function SupportBot() {
             {/* View 1: Question List */}
             {!activeFaq && !showContactForm && (
               <div className="flex flex-col gap-2" style={{ marginTop: '0.25rem' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-text-muted)' }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Frequently Asked Questions
                 </span>
                 {FAQ_ITEMS.map((item) => (
@@ -230,33 +230,48 @@ export default function SupportBot() {
                     key={item.id}
                     onClick={() => handleFaqClick(item)}
                     style={{
-                      background: 'var(--color-bg-subtle)',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-sm)',
-                      padding: '0.65rem 0.85rem',
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '10px',
+                      padding: '0.7rem 0.85rem',
                       textAlign: 'left',
                       fontSize: '0.85rem',
                       fontWeight: 600,
-                      color: 'var(--color-text-main)',
+                      color: '#ffffff',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       transition: 'all 0.15s ease',
+                      cursor: 'pointer',
                     }}
                     id={`faq-item-${item.id}`}
                   >
                     <span>{item.question}</span>
-                    <ArrowRight size={14} style={{ color: 'var(--color-text-dim)' }} />
+                    <ArrowRight size={14} style={{ color: 'var(--color-primary-400)' }} />
                   </button>
                 ))}
+
+                <div style={{ marginTop: '0.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '0.85rem', textAlign: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsOpen(false);
+                      window.dispatchEvent(new CustomEvent('open-contact-modal'));
+                    }}
+                    className="btn btn-primary btn-sm"
+                    style={{ width: '100%' }}
+                  >
+                    <Mail size={14} /> Open Full Contact Form
+                  </button>
+                </div>
               </div>
             )}
 
             {/* View 2: Active FAQ Answer */}
             {activeFaq && (
               <div className="flex flex-col gap-3 animate-fade-in">
-                <h5 style={{ fontSize: '0.95rem', fontWeight: 700 }}>{activeFaq.question}</h5>
-                <p style={{ fontSize: '0.85rem', lineHeight: '1.5', color: 'var(--color-text-main)' }}>
+                <h5 style={{ fontSize: '0.98rem', fontWeight: 700, color: '#ffffff' }}>{activeFaq.question}</h5>
+                <p style={{ fontSize: '0.88rem', lineHeight: '1.6', color: '#cbd5e1' }}>
                   {activeFaq.answer}
                 </p>
 
@@ -271,15 +286,15 @@ export default function SupportBot() {
                   </Link>
                 )}
 
-                <div style={{ marginTop: '1rem', borderTop: '1px solid var(--color-border)', paddingTop: '0.75rem' }}>
+                <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '0.75rem' }}>
                   <button
                     onClick={() => {
-                      setActiveFaq(null);
-                      setShowContactForm(true);
+                      setIsOpen(false);
+                      window.dispatchEvent(new CustomEvent('open-contact-modal'));
                     }}
-                    style={{ fontSize: '0.8rem', color: 'var(--color-primary-600)', fontWeight: 600 }}
+                    style={{ fontSize: '0.82rem', color: 'var(--color-primary-400)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
                   >
-                    Still need help? Send a support ticket →
+                    Still need help? Open full contact form →
                   </button>
                 </div>
               </div>
@@ -288,38 +303,45 @@ export default function SupportBot() {
             {/* View 3: Contact Support Form */}
             {showContactForm && (
               <div className="flex flex-col gap-2 animate-fade-in">
-                <h5 style={{ fontSize: '0.95rem', fontWeight: 700 }}>Contact The Support Team</h5>
-                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
-                  Submit your inquiry and our support administrators will review it.
+                <h5 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff' }}>Contact The Support Team</h5>
+                <p style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
+                  Submit your inquiry and our administrators will review it promptly.
                 </p>
 
                 {isSubmitted ? (
                   <div 
                     style={{
-                      background: '#ecfdf5',
-                      border: '1px solid #a7f3d0',
+                      background: 'rgba(16, 185, 129, 0.12)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
                       borderRadius: 'var(--radius-md)',
                       padding: '1.25rem',
                       textAlign: 'center',
-                      color: '#065f46',
+                      color: '#34d399',
                       marginTop: '1rem',
                     }}
                   >
                     <CheckCircle size={32} style={{ margin: '0 auto 0.5rem', color: '#10b981' }} />
-                    <h6 style={{ fontWeight: 700, fontSize: '0.95rem' }}>Inquiry Submitted</h6>
-                    <p style={{ fontSize: '0.8rem', color: '#047857', marginTop: '0.25rem' }}>
-                      Thank you. Your message has been saved to the support queue for administrative review.
+                    <h6 style={{ fontWeight: 700, fontSize: '0.95rem', color: '#ffffff' }}>Inquiry Submitted</h6>
+                    <p style={{ fontSize: '0.8rem', color: '#a7f3d0', marginTop: '0.25rem' }}>
+                      Thank you. Your message has been saved to the support queue for review.
                     </p>
                   </div>
                 ) : (
                   <form onSubmit={handleContactSubmit} style={{ marginTop: '0.5rem' }}>
                     <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-                      <label className="form-label" style={{ fontSize: '0.8rem' }}>Name</label>
+                      <label className="form-label" style={{ fontSize: '0.8rem', color: '#e2e8f0' }}>Full Name</label>
                       <input
                         type="text"
                         required
                         className="form-input"
-                        style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                        style={{ 
+                          padding: '0.6rem 0.85rem', 
+                          fontSize: '0.85rem', 
+                          background: 'rgba(255, 255, 255, 0.05)', 
+                          border: '1px solid rgba(255, 255, 255, 0.14)', 
+                          color: '#ffffff',
+                          borderRadius: '8px'
+                        }}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Your full name"
@@ -328,12 +350,19 @@ export default function SupportBot() {
                     </div>
 
                     <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-                      <label className="form-label" style={{ fontSize: '0.8rem' }}>Email Address</label>
+                      <label className="form-label" style={{ fontSize: '0.8rem', color: '#e2e8f0' }}>Email Address</label>
                       <input
                         type="email"
                         required
                         className="form-input"
-                        style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                        style={{ 
+                          padding: '0.6rem 0.85rem', 
+                          fontSize: '0.85rem', 
+                          background: 'rgba(255, 255, 255, 0.05)', 
+                          border: '1px solid rgba(255, 255, 255, 0.14)', 
+                          color: '#ffffff',
+                          borderRadius: '8px'
+                        }}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="your.email@example.com"
@@ -342,15 +371,23 @@ export default function SupportBot() {
                     </div>
 
                     <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-                      <label className="form-label" style={{ fontSize: '0.8rem' }}>What do you need help with?</label>
+                      <label className="form-label" style={{ fontSize: '0.8rem', color: '#e2e8f0' }}>How can we help?</label>
                       <textarea
                         required
                         rows={3}
                         className="form-textarea"
-                        style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem', minHeight: '80px' }}
+                        style={{ 
+                          padding: '0.6rem 0.85rem', 
+                          fontSize: '0.85rem', 
+                          minHeight: '80px',
+                          background: 'rgba(255, 255, 255, 0.05)', 
+                          border: '1px solid rgba(255, 255, 255, 0.14)', 
+                          color: '#ffffff',
+                          borderRadius: '8px'
+                        }}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Please describe the issue or question..."
+                        placeholder="Please describe your question or issue..."
                         id="support-form-message"
                       />
                     </div>
