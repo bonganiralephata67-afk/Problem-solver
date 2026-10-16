@@ -75,7 +75,7 @@
 
 /* HERO SECTION - SLEEK DARK THEME WITH GLOWING ACCENTS (DavichiUX style) */
 .hero-wrapper {
-  padding: 6.5rem 0 5rem;
+  padding: 2.75rem 0 2rem;
   background: radial-gradient(circle at 65% 20%, rgba(147, 51, 234, 0.16) 0%, rgba(37, 99, 235, 0.12) 35%, transparent 70%), var(--color-bg-base);
   border-bottom: 1px solid var(--color-border);
   position: relative;
@@ -135,32 +135,32 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.4rem 1.15rem;
+  padding: 0.35rem 1rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-full);
   color: #e2e8f0;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  margin-bottom: 2rem;
+  margin-bottom: 0.85rem;
   backdrop-filter: blur(8px);
 }
 
 .hero-title {
-  font-size: 3.75rem;
+  font-size: 2.85rem;
   font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.12;
-  margin-bottom: 1.5rem;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
   color: #ffffff;
 }
 
 .hero-subtitle {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: var(--color-text-muted);
-  line-height: 1.65;
-  margin: 0 auto 2.75rem;
-  max-width: 640px;
+  line-height: 1.5;
+  margin: 0 auto 1.35rem;
+  max-width: 680px;
 }
 
 /* Landing Page CTA: ONLY Get Help and Become an Expert */
@@ -172,29 +172,31 @@
   flex-wrap: wrap;
 }
 
-/* MENTOR SHOWCASE FANNED PERSPECTIVE CARDS (Frameblox UI Style) */
+/* MENTOR SHOWCASE FANNED PERSPECTIVE CARDS (Frameblox UI Style - Purely decorative design) */
 .hero-mentors-fanned {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 4.5rem auto 1rem;
+  margin: 1.5rem auto 0.25rem;
   position: relative;
   perspective: 1200px;
   width: 100%;
-  max-width: 900px;
-  height: 310px;
+  max-width: 860px;
+  height: 250px;
   z-index: 2;
+  pointer-events: none; /* purely decorative design, not clickable */
 }
 
 .fanned-card {
   position: relative;
-  border-radius: 22px;
+  border-radius: 18px;
   overflow: hidden;
   background: var(--color-bg-surface);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.75);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.75);
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
   flex-shrink: 0;
 }
 
@@ -203,77 +205,68 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s ease;
-}
-
-.fanned-card:hover {
-  transform: translateY(-16px) scale(1.06) !important;
-  z-index: 30 !important;
-  border-color: rgba(96, 165, 250, 0.6);
-  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.9), 0 0 30px rgba(37, 99, 235, 0.4);
-}
-
-.fanned-card:hover img {
-  transform: scale(1.08);
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 /* Center card (largest) */
 .fanned-card-center {
-  width: 220px;
-  height: 275px;
+  width: 195px;
+  height: 245px;
   z-index: 10;
-  margin: 0 -18px;
+  margin: 0 -16px;
   transform: translateY(0);
-  box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 45px -8px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
 /* Left inner card */
 .fanned-card-left2 {
-  width: 185px;
-  height: 240px;
+  width: 165px;
+  height: 215px;
   z-index: 7;
-  margin: 0 -18px;
-  transform: rotate(-6deg) translateY(12px);
+  margin: 0 -16px;
+  transform: rotate(-6deg) translateY(10px);
 }
 
 /* Far left card */
 .fanned-card-left1 {
-  width: 155px;
-  height: 205px;
+  width: 135px;
+  height: 180px;
   z-index: 4;
-  transform: rotate(-12deg) translateY(26px);
+  transform: rotate(-12deg) translateY(22px);
 }
 
 /* Right inner card */
 .fanned-card-right1 {
-  width: 185px;
-  height: 240px;
+  width: 165px;
+  height: 215px;
   z-index: 7;
-  margin: 0 -18px;
-  transform: rotate(6deg) translateY(12px);
+  margin: 0 -16px;
+  transform: rotate(6deg) translateY(10px);
 }
 
 /* Far right card */
 .fanned-card-right2 {
-  width: 155px;
-  height: 205px;
+  width: 135px;
+  height: 180px;
   z-index: 4;
-  transform: rotate(12deg) translateY(26px);
+  transform: rotate(12deg) translateY(22px);
 }
 
 .fanned-card-badge {
   position: absolute;
-  bottom: 0.85rem;
-  left: 0.85rem;
-  right: 0.85rem;
-  padding: 0.4rem 0.75rem;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  padding: 0.35rem 0.65rem;
   background: rgba(8, 9, 13, 0.88);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-sm);
   color: #ffffff;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -647,11 +640,28 @@
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .mobile-menu-btn { display: block; }
-  .hero-title { font-size: 2.75rem; }
+  .hero-wrapper { padding: 2.25rem 0 1.5rem; }
+  .hero-title { font-size: 2.15rem; }
+  .hero-subtitle { font-size: 1rem; }
+  .hero-mentors-fanned {
+    transform: scale(0.78);
+    transform-origin: center top;
+    margin: 1rem auto 0;
+    height: 200px;
+  }
   .steps-grid { grid-template-columns: 1fr; }
   .categories-grid { grid-template-columns: 1fr; }
   .streamlined-form-card { padding: 2rem 1.5rem; }
   .category-pill-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .hero-title { font-size: 1.85rem; }
+  .hero-mentors-fanned {
+    transform: scale(0.62);
+    transform-origin: center top;
+    height: 165px;
+  }
 }

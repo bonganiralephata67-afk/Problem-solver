@@ -57,11 +57,11 @@ export default function HomePage() {
             </div>
 
             <h1 className="hero-title">
-              Need help? Let's find the right person.
+              Get help from real people who understand what you're looking for.
             </h1>
 
             <p className="hero-subtitle">
-              From school subjects and career advice to business, entrepreneurship, and product design, connect with people who can help you move forward.
+              Less time searching. More time achieving. Find the right guidance to help you get where you want to be.
             </p>
 
             {/* The ONLY buttons on the landing page */}
@@ -75,36 +75,21 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* FANNED MENTORS CARDS (Image 2 - Frameblox UI Style) */}
-            <div className="hero-mentors-fanned" id="hero-mentors-fanned-container">
+            {/* FANNED MENTORS CARDS (Purely decorative visual showcase - non-clickable) */}
+            <div className="hero-mentors-fanned" aria-hidden="true">
               {/* Far Left Card */}
-              <div 
-                className="fanned-card fanned-card-left1" 
-                title="Academic & Mathematics Specialist"
-                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000001')}
-                id="fanned-card-1"
-              >
-                <img src={mentorLeft1} alt="Verified Academic Mentor" />
+              <div className="fanned-card fanned-card-left1">
+                <img src={mentorLeft1} alt="Mentor Showcase" />
               </div>
 
               {/* Left Inner Card */}
-              <div 
-                className="fanned-card fanned-card-left2" 
-                title="Product Design & UI/UX Mentor"
-                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000005')}
-                id="fanned-card-2"
-              >
-                <img src={mentorLeft2} alt="Verified Product Designer" />
+              <div className="fanned-card fanned-card-left2">
+                <img src={mentorLeft2} alt="Mentor Showcase" />
               </div>
 
-              {/* Center Featured Card (Largest) */}
-              <div 
-                className="fanned-card fanned-card-center" 
-                title="Software Architect & Engineering Lead"
-                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000006')}
-                id="fanned-card-center"
-              >
-                <img src={mentorCenter} alt="Featured Senior Engineering Mentor" />
+              {/* Center Featured Card */}
+              <div className="fanned-card fanned-card-center">
+                <img src={mentorCenter} alt="Featured Mentor" />
                 <div className="fanned-card-badge">
                   <div className="flex items-center gap-1">
                     <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
@@ -115,23 +100,13 @@ export default function HomePage() {
               </div>
 
               {/* Right Inner Card */}
-              <div 
-                className="fanned-card fanned-card-right1" 
-                title="Career Strategy & Transition Mentor"
-                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000002')}
-                id="fanned-card-3"
-              >
-                <img src={mentorRight1} alt="Verified Career Mentor" />
+              <div className="fanned-card fanned-card-right1">
+                <img src={mentorRight1} alt="Mentor Showcase" />
               </div>
 
               {/* Far Right Card */}
-              <div 
-                className="fanned-card fanned-card-right2" 
-                title="Entrepreneurship & Growth Consultant"
-                onClick={() => navigate('/get-help?category=11111111-0000-0000-0000-000000000003')}
-                id="fanned-card-4"
-              >
-                <img src={mentorRight2} alt="Verified Business Expert" />
+              <div className="fanned-card fanned-card-right2">
+                <img src={mentorRight2} alt="Mentor Showcase" />
               </div>
             </div>
           </div>
