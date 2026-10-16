@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
@@ -12,8 +12,28 @@ import {
 export default function Navbar() {
   const { currentUser, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolledDown, setIsScrolledDown] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Past the hero CTA buttons (~260px)
+      if (window.scrollY > 250) {
+        setIsScrolledDown(true);
+      } else {
+        setIsScrolledDown(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleContactUs = () => {
+    window.dispatchEvent(new CustomEvent('open-support-bot', { detail: { showContactForm: true } }));
+  };
 
   const handleHowItWorksClick = (e) => {
     if (location.pathname === '/') {
@@ -92,6 +112,16 @@ export default function Navbar() {
         <div className="nav-actions">
           {currentUser ? (
             <div className="flex items-center gap-3">
+              {isScrolledDown && location.pathname === '/' && (
+                <Link 
+                  to="/get-help" 
+                  className="btn btn-primary btn-sm animate-fade-in" 
+                  id="nav-scrolled-get-help-btn"
+                  style={{ padding: '0.4rem 0.85rem', fontSize: '0.84rem' }}
+                >
+                  Get Help
+                </Link>
+              )}
               <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--color-text-main)' }}>
                 {currentUser.full_name}
               </span>
@@ -106,14 +136,39 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <Link 
-              to="/auth" 
-              className="nav-link" 
-              style={{ fontWeight: 600, fontSize: '0.92rem' }}
-              id="nav-sign-in-btn"
-            >
-              Sign In
-            </Link>
+            <>
+              {/* Dynamic scroll behavior on landing page */}
+              {location.pathname === '/' && isScrolledDown ? (
+                <div className="flex items-center gap-2 animate-fade-in" id="nav-scrolled-actions">
+                  <Link 
+                    to="/get-help" 
+                    className="btn btn-primary btn-sm" 
+                    id="nav-scrolled-get-help-btn"
+                    style={{ padding: '0.42rem 0.95rem', fontSize: '0.85rem' }}
+                  >
+                    Get Help
+                  </Link>
+                  <Link 
+                    to="/expert/register" 
+                    className="btn btn-secondary btn-sm" 
+                    id="nav-scrolled-become-expert-btn"
+                    style={{ padding: '0.42rem 0.95rem', fontSize: '0.85rem' }}
+                  >
+                    Become an Expert
+                  </Link>
+                </div>
+              ) : (
+                <button 
+                  type="button"
+                  onClick={handleContactUs} 
+                  className="btn btn-secondary btn-sm animate-fade-in" 
+                  id="nav-contact-us-btn"
+                  style={{ padding: '0.45rem 1rem', fontSize: '0.88rem', fontWeight: 600 }}
+                >
+                  Contact Us
+                </button>
+              )}
+            </>
           )}
 
           {/* Mobile menu toggle */}
@@ -132,7 +187,7 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div 
           style={{
-            background: '#ffffff',
+            background: 'var(--color-bg-surface)',
             borderBottom: '1px solid var(--color-border)',
             padding: '1.5rem',
             display: 'flex',
@@ -160,7 +215,23 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="nav-link">Sign In</Link>
+            <div className="flex flex-col gap-2 pt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <Link to="/get-help" onClick={() => setMobileMenuOpen(false)} className="btn btn-primary btn-sm" style={{ textAlign: 'center' }}>
+                Get Help
+              </Link>
+              <Link to="/expert/register" onClick={() => setMobileMenuOpen(false)} className="btn btn-secondary btn-sm" style={{ textAlign: 'center' }}>
+                Become an Expert
+              </Link>
+              <button 
+                type="button"
+                onClick={() => { handleContactUs(); setMobileMenuOpen(false); }} 
+                className="btn btn-secondary btn-sm" 
+                style={{ textAlign: 'center' }}
+                id="mobile-contact-us-btn"
+              >
+                Contact Us
+              </button>
+            </div>
           )}
         </div>
       )}

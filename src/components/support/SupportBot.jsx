@@ -89,9 +89,15 @@ export default function SupportBot() {
     }
   }, [currentUser]);
 
-  // Listen for custom trigger from footer
+  // Listen for custom trigger from footer or navbar
   useEffect(() => {
-    const handleOpen = () => setIsOpen(true);
+    const handleOpen = (e) => {
+      setIsOpen(true);
+      if (e?.detail?.showContactForm) {
+        setShowContactForm(true);
+        setActiveFaq(null);
+      }
+    };
     window.addEventListener('open-support-bot', handleOpen);
     return () => window.removeEventListener('open-support-bot', handleOpen);
   }, []);

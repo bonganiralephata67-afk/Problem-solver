@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { 
@@ -15,11 +15,17 @@ import {
   CheckCircle2
 } from 'lucide-react';
 
+// Diverse photo set: Black students, Black entrepreneurs, White students, White professionals/educators
 import mentorCenter from '../assets/mentors/mentor_center.jpg';
 import mentorLeft1 from '../assets/mentors/mentor_left1.jpg';
 import mentorLeft2 from '../assets/mentors/mentor_left2.jpg';
 import mentorRight1 from '../assets/mentors/mentor_right1.jpg';
 import mentorRight2 from '../assets/mentors/mentor_right2.jpg';
+import blackMaleStudent from '../assets/mentors/black_male_student.jpg';
+import blackFemaleEntrepreneur from '../assets/mentors/black_female_entrepreneur.jpg';
+import blackMaleEntrepreneur from '../assets/mentors/black_male_entrepreneur.jpg';
+import blackFemaleStudent from '../assets/mentors/black_female_student.jpg';
+import whiteStudentCreative from '../assets/mentors/white_student_creative.jpg';
 
 const ICON_MAP = {
   GraduationCap,
@@ -32,9 +38,46 @@ const ICON_MAP = {
   HelpCircle,
 };
 
+// 3 Curated Rotation Sets with a rich mix of Black students at school, Black entrepreneurs, White students and mentors
+const MENTOR_ROTATION_SETS = [
+  // Set 1: Black tech entrepreneur in center, Black school student on left, White engineering student on right
+  [
+    { img: mentorLeft1, alt: "Professional Mentor" },
+    { img: blackFemaleStudent, alt: "Student Scholar" },
+    { img: blackMaleEntrepreneur, alt: "Tech Founder & Entrepreneur", role: "Verified Expert" },
+    { img: whiteStudentCreative, alt: "Engineering Student" },
+    { img: blackMaleStudent, alt: "University Student" }
+  ],
+  // Set 2: Black female entrepreneur in center, Black university student on left, White educator on right
+  [
+    { img: blackMaleStudent, alt: "University Student" },
+    { img: mentorLeft2, alt: "Creative Mentor" },
+    { img: blackFemaleEntrepreneur, alt: "Business Entrepreneur", role: "Verified Expert" },
+    { img: mentorRight1, alt: "Software Engineer" },
+    { img: mentorRight2, alt: "Academic Educator" }
+  ],
+  // Set 3: White tech mentor in center, Black female entrepreneur on left, Black male entrepreneur on right, Black student on right
+  [
+    { img: whiteStudentCreative, alt: "Creative Student" },
+    { img: blackFemaleEntrepreneur, alt: "Business Entrepreneur" },
+    { img: mentorCenter, alt: "Verified Expert Mentor", role: "Verified Expert" },
+    { img: blackMaleEntrepreneur, alt: "Tech Entrepreneur" },
+    { img: blackFemaleStudent, alt: "Biology Student" }
+  ]
+];
+
 export default function HomePage() {
   const { categories } = useData();
   const navigate = useNavigate();
+  const [activeSetIndex, setActiveSetIndex] = useState(0);
+
+  // Smoothly rotate through diverse pictures every 4.2 seconds (not too fast)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSetIndex((prev) => (prev + 1) % MENTOR_ROTATION_SETS.length);
+    }, 4200);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleCategoryClick = (categoryId) => {
     navigate(`/get-help?category=${categoryId}`);
@@ -42,13 +85,8 @@ export default function HomePage() {
 
   return (
     <div className="clean-page-bg">
-      {/* HERO SECTION - SLEEK DARK TECH WITH AMBIENT GLOW (Image 1) */}
+      {/* HERO SECTION - CLEAN SLEEK DARK DESIGN (No blue circle) */}
       <section className="hero-wrapper">
-        {/* Ambient Glowing Spheres & Orbital Ring */}
-        <div className="ambient-glow-sphere-1" />
-        <div className="ambient-glow-sphere-2" />
-        <div className="ambient-orbital-ring" />
-
         <div className="container">
           <div className="hero-center animate-slide-up">
             <div className="hero-pill">
@@ -56,15 +94,17 @@ export default function HomePage() {
               <span>Simple On-Demand Expert Matching</span>
             </div>
 
+            {/* Exact headline kept in bold */}
             <h1 className="hero-title">
               Get help from real people who understand what you're looking for.
             </h1>
 
+            {/* Exact subheading kept, grouped with title via Law of Proximity */}
             <p className="hero-subtitle">
               Less time searching. More time achieving. Find the right guidance to help you get where you want to be.
             </p>
 
-            {/* The ONLY buttons on the landing page */}
+            {/* Spaced CTA Buttons */}
             <div className="hero-cta">
               <Link to="/get-help" className="btn btn-primary btn-lg" id="hero-get-help-btn">
                 Get Help <ArrowRight size={18} />
@@ -75,21 +115,42 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* FANNED MENTORS CARDS (Purely decorative visual showcase - non-clickable) */}
+            {/* FANNED MENTORS CARDS (Diverse Black & White students & entrepreneurs, animated crossfade, non-clickable) */}
             <div className="hero-mentors-fanned" aria-hidden="true">
-              {/* Far Left Card */}
+              {/* Far Left Card (Slot 0) */}
               <div className="fanned-card fanned-card-left1">
-                <img src={mentorLeft1} alt="Mentor Showcase" />
+                {MENTOR_ROTATION_SETS.map((set, sIdx) => (
+                  <img
+                    key={sIdx}
+                    src={set[0].img}
+                    alt={set[0].alt}
+                    className={`fanned-img-layer ${sIdx === activeSetIndex ? 'active' : ''}`}
+                  />
+                ))}
               </div>
 
-              {/* Left Inner Card */}
+              {/* Left Inner Card (Slot 1) */}
               <div className="fanned-card fanned-card-left2">
-                <img src={mentorLeft2} alt="Mentor Showcase" />
+                {MENTOR_ROTATION_SETS.map((set, sIdx) => (
+                  <img
+                    key={sIdx}
+                    src={set[1].img}
+                    alt={set[1].alt}
+                    className={`fanned-img-layer ${sIdx === activeSetIndex ? 'active' : ''}`}
+                  />
+                ))}
               </div>
 
-              {/* Center Featured Card */}
+              {/* Center Featured Card (Slot 2) */}
               <div className="fanned-card fanned-card-center">
-                <img src={mentorCenter} alt="Featured Mentor" />
+                {MENTOR_ROTATION_SETS.map((set, sIdx) => (
+                  <img
+                    key={sIdx}
+                    src={set[2].img}
+                    alt={set[2].alt}
+                    className={`fanned-img-layer ${sIdx === activeSetIndex ? 'active' : ''}`}
+                  />
+                ))}
                 <div className="fanned-card-badge">
                   <div className="flex items-center gap-1">
                     <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
@@ -99,14 +160,28 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Right Inner Card */}
+              {/* Right Inner Card (Slot 3) */}
               <div className="fanned-card fanned-card-right1">
-                <img src={mentorRight1} alt="Mentor Showcase" />
+                {MENTOR_ROTATION_SETS.map((set, sIdx) => (
+                  <img
+                    key={sIdx}
+                    src={set[3].img}
+                    alt={set[3].alt}
+                    className={`fanned-img-layer ${sIdx === activeSetIndex ? 'active' : ''}`}
+                  />
+                ))}
               </div>
 
-              {/* Far Right Card */}
+              {/* Far Right Card (Slot 4) */}
               <div className="fanned-card fanned-card-right2">
-                <img src={mentorRight2} alt="Mentor Showcase" />
+                {MENTOR_ROTATION_SETS.map((set, sIdx) => (
+                  <img
+                    key={sIdx}
+                    src={set[4].img}
+                    alt={set[4].alt}
+                    className={`fanned-img-layer ${sIdx === activeSetIndex ? 'active' : ''}`}
+                  />
+                ))}
               </div>
             </div>
           </div>
